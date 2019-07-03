@@ -1,0 +1,5 @@
+#lang racket
+(length '(plato socrates aristotle))
+(reverse '(plato socrates aristotle))
+(member 'socrates '(plato socrates aristotle))
+(member 'raphael '(plato socrates aristotle))
