@@ -20,6 +20,10 @@
           
 (define pair-sum?
   (lambda (lst n)
-    (if (= (+ (car lst)
+    (if (null? lst) #f ;;if the list is empty
+        (if (null? (cdr lst)) #f ;;if on the last element of the list (no pairs available)
+            (if (= (+ (car lst) (car (cdr lst))) n)
+                #t
+                (pair-sum? (cdr lst) n))))))
        
     
