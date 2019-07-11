@@ -22,8 +22,8 @@
   (lambda (S1 S2)
     (if (null? S1) S2
         (if (member? (car S1) S2)
-        (union (cdr S1) S2)
-        (cons (car S1) (union (cdr S1) S2))))))
+            (union (cdr S1) S2)
+            (cons (car S1) (union (cdr S1) S2)))))) ;;cons the unique car S1 with cdr S1 U S2
           
 (define intersect
   (lambda (S1 S2)
@@ -31,5 +31,5 @@
         (if (set-equal? S1 S2) S1 
             (if (member? (car S1) S2)
                 (cons (car S1) (intersect (cdr S1) S2))
-                (intersect (cdr S1) S2))))))
+                (intersect (cdr S1) S2)))))) ;;since car S1 already in S2, we can ignore it
                 
