@@ -2,13 +2,17 @@
 ;;reflexive?: xRx for every x
 (define reflexive?
   (lambda (L S)
-    (if (null? S) #t
-        (if (not (relation? L S)) #f
-            (if (< (length L) (length S)) #f
-                (if (equal? (car (car L)) (car (cdr (car L))))
-                    (reflexive? (cdr L) (remove (car (car L)) S))
-                    (reflexive? (cdr L) S)))))))
+    (if (not (relation? L S)) #f
+        (real-reflexive? L S))))
 
+(define real-reflexive?
+  (lambda (L S)
+    (if (null? S) #t
+        (if (< (length L) (length S)) #f
+            (if (equal? (car (car L)) (car (cdr (car L))))
+                (real-reflexive? (cdr L) (remove (car (car L)) S))
+                (real-reflexive? (cdr L) S))))))
+;;-----end reflexive?-----;;        
 
 ;;symmetric?: xRy => yRx
 (define symmetric?
@@ -19,14 +23,31 @@
                 (symmetric? (remove* (list (car L)) L))
                 (symmetric? (remove* (list (reverse (car L))) (remove* (list (car L)) L))))
             #f))))
-
+;;-----end symmetric?-----;;
 
 ;;transitive: xRy and yRz => xRz
-;;(define transitive?
-  ;;(lambda (L)
-    ;;(if (null? L) #t
-        
+(define transitive?
+  (lambda (L)
+    (real-transitive? L L)))
 
+(define real-transitive?
+  (lambda (L changeL)
+    (if (null? changeL) #t
+        (if (check-for-transitive L (car changeL) L)
+            (real-transitive? L (cdr changeL))
+            #f))))
+
+(define check-for-transitive
+ (lambda (L pair resetL)
+   (if (null? resetL) #t
+       (if (equal? (car (car resetL)) (car (cdr pair)))
+           (if (set-exists? (list (car pair) (car (cdr (car resetL)))) L)
+               (check-for-transitive L pair (cdr resetL))
+               #f)
+           (check-for-transitive L pair (cdr resetL))))))
+;;-----end transitive?-----;;
+        
+        
 
 ;;-----Helper Functions-----;;
 
