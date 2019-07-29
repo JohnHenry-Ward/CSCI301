@@ -38,31 +38,25 @@
 
 ;;transitive-closure
 
-;;function checks if relation is already transitive
 (define transitive-closure
   (lambda (L)
     (if (transitive? L) L
-        (real-transitive-closure L L))))
+        (real-transitive-closure L))))
 
-;;function makes progress and adds the missing pairs to fullL
 (define real-transitive-closure
   (lambda (L fullL)
-    (if (null? L) fullL
-        (if (check-for-transitive fullL (car L) fullL)
-            (real-transitive-closure (cdr L) fullL)
-            (real-transitive-closure (cdr L) (append (add-missing-pairs fullL (car L) fullL '()) fullL))))))
+    (if (check-for-transitive fullL (car L) fullL)
+        (real-transitive-closure (cdr L) fullL)
+        (real-transtiive-closure (cdr L) (add-missing-pairs fullL (car L) fullL)))))
+        ;;make function called get transitive pair, add it to fullL
+        
+;;add-missing-pairs will pretty much do what check-for-transitive does and then return the list with the pairs added
 
-;;function finds missing pairs, adds them to a list, and returns them
 (define add-missing-pairs
-  (lambda (L pair resetL missingPairs)
-    (if (null? resetL) missingPairs
-        (if (equal? (car (car resetL)) (car (cdr pair))) ;;if link is found (a b) (b c)
-            (if (set-exists? (list (car pair) (car (cdr (car resetL)))) L) ;;check if new pair (a c) is in L
-                (add-missing-pairs L pair (cdr resetL) missingPairs) ;;keep checking resetL for possible links
-                (add-missing-pairs L pair (cdr resetL) (append (list (list (car pair) (car (cdr (car resetL))))) missingPairs))) ;;keep checking resetL for possible links and add the missing pair to missingPairs
-            (add-missing-pairs L pair (cdr resetL) missingPairs)))))
+  (lambda (L pair resetL)
+    
 
-;;-----end transitive-closure-----;;
+
                                  
 ;;-----Helper Functions-----;;
         
