@@ -1,50 +1,55 @@
 #lang racket
 ;;reflexive-closure
-
+;;wrapper function that checks if initial L is reflexive, if so, no work needs to be done
 (define reflexive-closure
   (lambda (L S)
     (if (reflexive? L S) L
-        (real-reflexive-closure L L S))))
+        (real-reflexive-closure L L S S))))
 
+;;recursively finds which pairs are missing from L, and leaves them in S, otherwise removes them
 (define real-reflexive-closure
-  (lambda (L fullL S)
-    (if (null? L) (print-reflexive-closure fullL S)
+  (lambda (L fullL S fullS)
+    (if (null? L) (print-reflexive-closure fullL S fullS)
         (if (equal? (car (car L)) (car (cdr (car L))))
-            (real-reflexive-closure (cdr L) fullL (remove (car (car L)) S))
-            (real-reflexive-closure (cdr L) fullL S)))))
-    
+            (real-reflexive-closure (cdr L) fullL (remove (car (car L)) S) fullS) ;;remove pair from L and S, since it's not missing
+            (real-reflexive-closure (cdr L) fullL S fullS))))) ;;leave pair in S, since it is missing
+
+;;called once all of L has been checked, and adds the 'missing' pairs into L
 (define print-reflexive-closure
-  (lambda (L missing)
-    (if (null? missing) L
-        (print-reflexive-closure (append L (list (append (list (car missing)) (list (car missing))))) (cdr missing)))))
+  (lambda (L missing S)
+    (if (null? missing) ;;if we have added all missing pairs
+        (if (reflexive? L S) L ;;not sure if this part is necessary but it checks if after missing components are added, then checks if L is truly reflexive
+            (displayln (append L " but L is still not reflexive")))
+        (print-reflexive-closure (append L (list (append (list (car missing)) (list (car missing))))) (cdr missing) S))))
 
 ;;-----end reflexive-closure-----;;
 
 ;;symmetric-closure
-
+;;wrapper funciton that checks if initial L is symmetric, if so, no work needs to be done
 (define symmetric-closure
   (lambda (L)
     (if (symmetric? L) L
         (real-symmetric-closure L L))))
 
+;;function recursively checks if reverse of pair in L, L is used to make progress, fullL is only added to
 (define real-symmetric-closure
   (lambda (L fullL)
     (if (null? L) fullL
         (if (set-exists? (reverse (car L)) L)
-            (real-symmetric-closure (cdr L) fullL)
-            (real-symmetric-closure (cdr L) (append (list (reverse (car L))) fullL))))))
+            (real-symmetric-closure (cdr L) fullL) ;;if symmetric pair is in L, nothing needs to be added
+            (real-symmetric-closure (cdr L) (append (list (reverse (car L))) fullL)))))) ;;if symmetric pair NOT in L, add it to fullL
 
 ;;-----end symmetric-closure-----;;
 
 ;;transitive-closure
 
-;;function checks if relation is already transitive
+;;wrapper function checks if initial L is transitive, if so, no work needs to be done
 (define transitive-closure
   (lambda (L)
     (if (transitive? L) L
         (real-transitive-closure L L))))
 
-;;function makes progress and adds the missing pairs to fullL
+;;function recursively makes progress and adds the missing pairs to fullL
 (define real-transitive-closure
   (lambda (L fullL)
     (if (null? L) fullL
